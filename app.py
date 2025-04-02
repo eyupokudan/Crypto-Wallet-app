@@ -17,6 +17,25 @@ def load_portfolio():
 
 def save_portfolio():
     pass
+import requests
+import json
+
+def fetch_coins():
+    global coin_list
+    url = "https://api.coingecko.com/api/v3/coins/markets"
+    params = {
+        "vs_currency": "usd",
+        "per_page": 250,
+        "page": 1,
+        "price_change_percentage": "24h"
+    }
+    try:
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+        coin_list = response.json()
+    except Exception as e:
+        print(f"Error fetching coins: {e}")
+
 
 app.mainloop()
 
