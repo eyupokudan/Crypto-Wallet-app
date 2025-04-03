@@ -5,6 +5,9 @@ import io
 from PIL import Image
 import requests
 from tkinter import messagebox
+import os
+import json
+
 
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("dark-blue")
@@ -41,12 +44,13 @@ selected_coin = {}
 sort_option = tk.StringVar(value="name")
 
 def load_portfolio():
-    pass
-
+    global portfolio
+    if os.path.exists("wallet.json"):
+        with open("wallet.json", "r") as f:
+            portfolio = json.load(f)
 def save_portfolio():
-    pass
-import requests
-import json
+    with open("wallet.json", "w") as f:
+        json.dump(portfolio, f)
 
 def fetch_coins():
     global coin_list
