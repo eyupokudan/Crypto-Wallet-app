@@ -29,6 +29,12 @@ price_entry = ctk.CTkEntry(app, placeholder_text="Buy Price")
 price_entry.pack(pady=2)
 add_button = ctk.CTkButton(app, text="Add Coin", command=add_coin)
 add_button.pack(pady=5)
+button_frame = ctk.CTkFrame(app)
+button_frame.pack(pady=10)
+
+ctk.CTkButton(button_frame, text="Add Coin", command=add_coin).grid(row=0, column=0, padx=5)
+ctk.CTkButton(button_frame, text="Delete", command=delete_coin).grid(row=0, column=1, padx=5)
+
 portfolio = []
 coin_list = []
 selected_coin = {}
@@ -107,6 +113,16 @@ def add_coin():
         })
 
     save_portfolio()
+
+def delete_coin():
+    selected = table.focus()
+    if not selected:
+        return
+    index = int(table.index(selected))
+    del portfolio[index]
+    save_portfolio()
+    update_table()
+
 
 def search_coin(event):
     keyword = search_entry.get().lower()
