@@ -4,6 +4,7 @@ from tkinter import ttk, messagebox
 import io
 from PIL import Image
 import requests
+from tkinter import messagebox
 
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("dark-blue")
@@ -22,6 +23,12 @@ coin_logo = ctk.CTkLabel(app, text="")
 coin_logo.pack()
 coin_info = ctk.CTkLabel(app, text="Select a coin to view details", font=("Arial", 14))
 coin_info.pack(pady=5)
+amount_entry = ctk.CTkEntry(app, placeholder_text="Amount")
+amount_entry.pack(pady=2)
+price_entry = ctk.CTkEntry(app, placeholder_text="Buy Price")
+price_entry.pack(pady=2)
+add_button = ctk.CTkButton(app, text="Add Coin", command=add_coin)
+add_button.pack(pady=5)
 portfolio = []
 coin_list = []
 selected_coin = {}
@@ -72,6 +79,34 @@ def display_coin_info():
     img = Image.open(io.BytesIO(img_data)).resize((40, 40))
     img_tk = ctk.CTkImage(light_image=img, dark_image=img, size=(40, 40))
     coin_logo.configure(image=img_tk)
+
+def add_coin():
+    if not selected_coin:
+        messagebox.showinfo("Select Coin", "Please choose a coin first.")
+        return
+    try:
+        amount = float(amount_entry.get())
+        buy_price = float(price_entry.get())
+    except:
+        messagebox.showerror("Invalid Input", "Amount and Price must be numeric.")
+        return
+
+    coin_id = selected_coin["id"]
+    for item in portfolio:
+        if item["id"] == coin_id:
+            item["amount"] += amount
+            item["buy_price"] = (item["buy_price"] + buy_price) / 2
+            break
+    else:
+        portfolio.append({
+            "id": coin_id,
+            "name": selected_coin["name"],
+            "amount": amount,
+            "buy_price": buy_price,
+            "logo": selected_coin["image"]
+        })
+
+    save_portfolio()
 
 def search_coin(event):
     keyword = search_entry.get().lower()
