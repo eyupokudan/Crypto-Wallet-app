@@ -1,6 +1,6 @@
 import customtkinter as ctk
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk
 import io
 from PIL import Image
 import requests
@@ -34,6 +34,13 @@ add_button = ctk.CTkButton(app, text="Add Coin", command=add_coin)
 add_button.pack(pady=5)
 button_frame = ctk.CTkFrame(app)
 button_frame.pack(pady=10)
+columns = ("Coin", "Amount", "Buy Price", "Current Price", "Profit", "24h Change", "Total")
+table = ttk.Treeview(app, columns=columns, show="headings", height=10)
+for col in columns:
+    table.heading(col, text=col)
+    table.column(col, anchor=tk.CENTER, width=120)
+table.pack(pady=10)
+
 
 ctk.CTkButton(button_frame, text="Add Coin", command=add_coin).grid(row=0, column=0, padx=5)
 ctk.CTkButton(button_frame, text="Delete", command=delete_coin).grid(row=0, column=1, padx=5)
@@ -48,9 +55,33 @@ def load_portfolio():
     if os.path.exists("wallet.json"):
         with open("wallet.json", "r") as f:
             portfolio = json.load(f)
+
 def save_portfolio():
     with open("wallet.json", "w") as f:
         json.dump(portfolio, f)
+
+def update_table():
+    for row in table.get_children():
+        table.delete(row)
+
+    sorted_data = sorted(portfolio, key=lambda x: x.get(sort_option.get(), 0), reverse=True)
+
+    for item in sorted_data:
+        current_price = item.get("current_price", 0)
+        profit = item.get("profit", 0)
+        change_24h = item.get("change_24h", 0)
+        total_value = item["amount"] * current_price
+
+        table.insert("", tk.END, values=(
+            item["name"],
+            f"{item['amount']:.4f}",
+            f"${item['buy_price']:.2f}",
+            f"${current_price:.2f}",
+            f"${profit:.2f}",
+            f"{change_24h:.2f}%",
+            f"${total_value:.2f}"
+        ))
+
 
 def fetch_coins():
     global coin_list
@@ -135,7 +166,8 @@ def search_coin(event):
         if keyword in coin["name"].lower() or keyword in coin["symbol"].lower():
             search_results.insert(tk.END, coin["name"])
      
-
-
+fetch_coins()
+load_portfolio()
+update_table()
 app.mainloop()
 
