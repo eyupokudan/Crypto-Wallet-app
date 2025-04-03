@@ -57,6 +57,8 @@ table.pack(pady=10)
 
 ctk.CTkButton(button_frame, text="Add Coin", command=add_coin).grid(row=0, column=0, padx=5)
 ctk.CTkButton(button_frame, text="Delete", command=delete_coin).grid(row=0, column=1, padx=5)
+ctk.CTkButton(button_frame, text="Update Prices", command=update_prices).grid(row=0, column=2, padx=5)
+
 
 portfolio = []
 coin_list = []
@@ -94,6 +96,19 @@ def update_table():
             f"{change_24h:.2f}%",
             f"${total_value:.2f}"
         ))
+
+def update_prices():
+    fetch_coins()
+    for item in portfolio:
+        for coin in coin_list:
+            if coin["id"] == item["id"]:
+                item["current_price"] = coin["current_price"]
+                item["profit"] = (coin["current_price"] - item["buy_price"]) * item["amount"]
+                item["change_24h"] = coin["price_change_percentage_24h"]
+                break
+    save_portfolio()
+    update_table()
+
 
 
 def fetch_coins():
