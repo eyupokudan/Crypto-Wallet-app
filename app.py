@@ -34,6 +34,19 @@ add_button = ctk.CTkButton(app, text="Add Coin", command=add_coin)
 add_button.pack(pady=5)
 button_frame = ctk.CTkFrame(app)
 button_frame.pack(pady=10)
+ctk.CTkLabel(app, text="Sort By:", font=("Arial", 12)).pack(pady=5)
+
+sort_names = {
+    "name": "Coin Name",
+    "current_price": "Current Price",
+    "amount": "Amount",
+    "profit": "Profit / Loss",
+    "change_24h": "24h Change"
+}
+
+sort_menu = ctk.CTkOptionMenu(app, values=list(sort_names.keys()), variable=sort_option, command=lambda x: update_table())
+sort_menu.pack()
+
 columns = ("Coin", "Amount", "Buy Price", "Current Price", "Profit", "24h Change", "Total")
 table = ttk.Treeview(app, columns=columns, show="headings", height=10)
 for col in columns:
