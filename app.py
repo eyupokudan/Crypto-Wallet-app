@@ -175,6 +175,7 @@ def display_coin_info():
              f"Price: ${selected_coin['current_price']:.2f} | "
              f"24h: {selected_coin['price_change_percentage_24h']:.2f}%"
     )
+    
     img_data = requests.get(selected_coin['image']).content
     img = Image.open(io.BytesIO(img_data)).resize((40, 40))
     img_tk = ctk.CTkImage(light_image=img, dark_image=img, size=(40, 40))
@@ -185,11 +186,17 @@ def add_coin():
         messagebox.showinfo("Select Coin", "Please choose a coin first.")
         return
     try:
-        amount = float(amount_entry.get())
-        buy_price = float(price_entry.get())
+        amount_text = amount_entry.get()
+        price_text = price_entry.get()
+        if not amount_text or not price_text:
+            messagebox.showwarning("Missing Input", "Please enter both amount and price.")
+            return
+        amount = float(amount_text)
+        buy_price = float(price_text)
     except:
         messagebox.showerror("Invalid Input", "Amount and Price must be numeric.")
         return
+
 
     coin_id = selected_coin["id"]
     for item in portfolio:
@@ -211,6 +218,7 @@ def add_coin():
 def delete_coin():
     selected = table.focus()
     if not selected:
+        messagebox.showinfo("No Selection", "Please select a coin to delete.")
         return
     index = int(table.index(selected))
     del portfolio[index]
@@ -218,12 +226,18 @@ def delete_coin():
     update_table()
 
 
+
 def search_coin(event):
     keyword = search_entry.get().lower()
     search_results.delete(0, tk.END)
+    found = False
     for coin in coin_list:
         if keyword in coin["name"].lower() or keyword in coin["symbol"].lower():
             search_results.insert(tk.END, coin["name"])
+            found = True
+    if not found:
+        search_results.insert(tk.END, "No matching coins found")
+
      
 fetch_coins()
 load_portfolio()
