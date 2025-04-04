@@ -10,7 +10,7 @@ import json
 import pandas as pd
 import plotly.express as px
 
-
+ctk.CTkLabel(app, text="Crypto Wallet", font=("Arial", 24, "bold")).pack(pady=10)
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("dark-blue")
 
@@ -39,6 +39,7 @@ add_button.pack(pady=5)
 button_frame = ctk.CTkFrame(app)
 button_frame.pack(pady=10)
 ctk.CTkLabel(app, text="Sort By:", font=("Arial", 12)).pack(pady=5)
+
 
 sort_names = {
     "name": "Coin Name",
