@@ -7,6 +7,8 @@ import requests
 from tkinter import messagebox
 import os
 import json
+import pandas as pd
+import plotly.express as px
 
 
 ctk.set_appearance_mode("dark")
@@ -58,6 +60,7 @@ table.pack(pady=10)
 ctk.CTkButton(button_frame, text="Add Coin", command=add_coin).grid(row=0, column=0, padx=5)
 ctk.CTkButton(button_frame, text="Delete", command=delete_coin).grid(row=0, column=1, padx=5)
 ctk.CTkButton(button_frame, text="Update Prices", command=update_prices).grid(row=0, column=2, padx=5)
+ctk.CTkButton(button_frame, text="Pie Chart", command=show_pie_chart).grid(row=0, column=3, padx=5)
 
 
 portfolio = []
@@ -96,6 +99,20 @@ def update_table():
             f"{change_24h:.2f}%",
             f"${total_value:.2f}"
         ))
+
+def show_pie_chart():
+    if not portfolio:
+        messagebox.showinfo("Empty Wallet", "No data available for pie chart.")
+        return
+
+    df = pd.DataFrame([{
+        "Coin": item["name"],
+        "Value": item["amount"] * item.get("current_price", 0)
+    } for item in portfolio])
+
+    fig = px.pie(df, names="Coin", values="Value", title="Portfolio Distribution", hole=0.4)
+    fig.update_layout(title_font=dict(size=22), font=dict(size=14))
+    fig.show()        
 
 def update_prices():
     fetch_coins()
