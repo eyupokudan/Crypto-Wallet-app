@@ -23,6 +23,8 @@ search_entry.bind("<KeyRelease>", search_coin)
 
 search_results = tk.Listbox(app, height=6, width=40)
 search_results.pack()
+summary_label = ctk.CTkLabel(app, text="Wallet Summary Loading...", font=("Arial", 16))
+summary_label.pack(pady=10)
 search_results.bind("<<ListboxSelect>>", select_coin)
 coin_logo = ctk.CTkLabel(app, text="")
 coin_logo.pack()
@@ -99,6 +101,17 @@ def update_table():
             f"{change_24h:.2f}%",
             f"${total_value:.2f}"
         ))
+
+def update_summary():
+    if not portfolio:
+        summary_label.configure(text="Wallet is empty.")
+        return
+
+    total_value = sum(item.get("amount", 0) * item.get("current_price", 0) for item in portfolio)
+    total_profit = sum(item.get("profit", 0) for item in portfolio)
+    change_24h = sum(item.get("change_24h", 0) * item.get("amount", 0) for item in portfolio)
+
+    summary_label.configure(text=f"Total Wallet Value: ${total_value:.2f} | 24h Change: {change_24h:.2f} | Net P/L: ${total_profit:.2f}")
 
 def show_pie_chart():
     if not portfolio:
@@ -214,5 +227,6 @@ def search_coin(event):
 fetch_coins()
 load_portfolio()
 update_table()
+update_summary()
 app.mainloop()
 
