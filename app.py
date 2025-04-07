@@ -212,7 +212,6 @@ def setup_ui():
 # The part required to load data, set up the interface and run it when the application is started.
 fetch_coins()
 load_portfolio()
-
 setup_ui()
 update_prices()
 
