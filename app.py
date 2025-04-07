@@ -1,5 +1,4 @@
-# Crypto Wallet Application 
-
+#Here are the libraries used in the application, all of which must be installed to run the application.
 import customtkinter as ctk
 import tkinter as tk
 from tkinter import ttk, messagebox
@@ -11,22 +10,21 @@ import io
 import plotly.express as px
 import pandas as pd
 
-# Appearance settings
+# The dark theme and color code of the app are here.
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("dark-blue")
 
-# Main Application Window
 app = ctk.CTk()
 app.title("Crypto Wallet")
 app.geometry("1100x900")
 
-# Global variables
+# I defined the variables here.
 portfolio = []
 coin_list = []
 selected_coin = {}
 sort_option = tk.StringVar(value="name")
 
-# File Operations
+# Here it loads the saved portfolio data from the JSON file.
 def load_portfolio():
     global portfolio
     if os.path.exists("wallet.json"):
@@ -37,7 +35,7 @@ def save_portfolio():
     with open("wallet.json", "w") as file:
         json.dump(portfolio, file)
 
-# API Operations
+# It allows me to pull live coin data using the CoinGecko API.
 def fetch_coins():
     global coin_list
     url = "https://api.coingecko.com/api/v3/coins/markets"
@@ -49,7 +47,7 @@ def fetch_coins():
     except Exception as e:
         messagebox.showerror("API Error", f"Failed to fetch coin data: {e}")
 
-# Coin Search and Selection
+# It searches for the coin according to the coin name entered by the user and displays it to the user.
 def search_coin(event):
     keyword = search_entry.get().lower()
     search_results.delete(0, tk.END)
@@ -75,7 +73,7 @@ def display_coin_info():
     img_tk = ctk.CTkImage(light_image=img, dark_image=img, size=(40, 40))
     coin_logo.configure(image=img_tk)
 
-# Portfolio Management
+# To add the selected coin to the user's wallet, or deleted it.
 def add_coin():
     if not selected_coin:
         messagebox.showinfo("Info", "Please select a coin first.")
@@ -111,10 +109,10 @@ def delete_coin():
         save_portfolio()
         update_table()
 
-# Summary Bar
 summary_label = ctk.CTkLabel(app, text="Wallet Summary Loading...", font=("Arial", 16))
 summary_label.pack(pady=10)
 
+# Show total portfolio value, profit/loss and 24-hour change.
 def update_summary():
     if not portfolio:
         summary_label.configure(text="Wallet is empty.")
@@ -124,6 +122,7 @@ def update_summary():
     change_24h = sum(item.get("change_24h", 0) * item.get("amount", 0) for item in portfolio)
     summary_label.configure(text=f"Total Wallet Value: ${total_value:.2f} | 24h Change: {change_24h:.2f} | Net P/L: ${total_profit:.2f}")
 
+# It allows us to update the prices of coins in the Portfolio from the API.
 def update_prices():
     fetch_coins()
     for item in portfolio:
@@ -139,8 +138,7 @@ def update_prices():
     update_table()
     update_summary()
 
-# Pie Chart
-
+# Visualize the distribution of coins in total value with pie chart.
 def show_pie_chart():
     if not portfolio:
         messagebox.showinfo("Empty Wallet", "No data available for pie chart.")
@@ -153,7 +151,7 @@ def show_pie_chart():
     fig.update_layout(title_font=dict(size=22), font=dict(size=14))
     fig.show()
 
-# Update table display
+# Allows rearrangement of coins in the wallet when added or removed.
 def update_table():
     for row in table.get_children():
         table.delete(row)
@@ -173,7 +171,7 @@ def update_table():
             f"${total_value:.2f}"
         ))
 
-# UI Setup (Widgets)
+# The main function where all components are created and placed in the interface.
 def setup_ui():
     global search_entry, search_results, coin_info, coin_logo, amount_entry, price_entry, table
 
@@ -211,7 +209,7 @@ def setup_ui():
         table.column(col, anchor="center")
     table.pack(pady=10)
 
-# Initializations
+# The part required to load data, set up the interface and run it when the application is started.
 fetch_coins()
 load_portfolio()
 setup_ui()
