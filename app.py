@@ -41,7 +41,7 @@ def fetch_coins():
     url = "https://api.coingecko.com/api/v3/coins/markets"
     params = {"vs_currency": "usd", "per_page": 250, "page": 1, "price_change_percentage": "24h"}
     try:
-        response = requests.get(url, params=params)
+        response = requests.get(url, params=params, timeout=10)
         response.raise_for_status()
         coin_list = response.json()
     except Exception as e:
@@ -68,7 +68,7 @@ def select_coin(event):
 
 def display_coin_info():
     coin_info.configure(text=f"{selected_coin['name']} ({selected_coin['symbol'].upper()})\nPrice: ${selected_coin['current_price']:.2f} | 24h: {selected_coin['price_change_percentage_24h']:.2f}%")
-    img_data = requests.get(selected_coin['image']).content
+    img_data = requests.get(selected_coin['image'], timeout=10).content
     img = Image.open(io.BytesIO(img_data)).resize((40, 40))
     img_tk = ctk.CTkImage(light_image=img, dark_image=img, size=(40, 40))
     coin_logo.configure(image=img_tk)
